@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        body {
+            background: #eee;
+        }
+
+        .main-box.no-header {
+            padding-top: 20px;
+        }
+
+        .main-box {
+            background: #ffffff;
+            -webkit-box-shadow: 1px 1px 2px 0 #cccccc;
+            -moz-box-shadow: 1px 1px 2px 0 #cccccc;
+            -o-box-shadow: 1px 1px 2px 0 #cccccc;
+            -ms-box-shadow: 1px 1px 2px 0 #cccccc;
+            box-shadow: 1px 1px 2px 0 #cccccc;
+            margin-bottom: 16px;
+            -webikt-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .table a.table-link.danger {
+            color: #e74c3c;
+        }
+
+        .label {
+            border-radius: 3px;
+            font-size: 0.875em;
+            font-weight: 600;
+        }
+
+        .user-list tbody td .user-subhead {
+            font-size: 0.875em;
+            font-style: italic;
+        }
+
+        .user-list tbody td .user-link {
+            display: block;
+            font-size: 1.25em;
+            padding-top: 3px;
+            margin-left: 60px;
+        }
+
+        a {
+            color: #3498db;
+            outline: none !important;
+        }
+
+        .user-list tbody td > img {
+            position: relative;
+            max-width: 50px;
+            float: left;
+            margin-right: 15px;
+        }
+
+        .table thead tr th {
+            text-transform: uppercase;
+            font-size: 0.875em;
+        }
+
+        .table thead tr th {
+            border-bottom: 2px solid #e7ebee;
+        }
+
+        .table tbody tr td:first-child {
+            font-size: 1.125em;
+            font-weight: 300;
+        }
+
+        .table tbody tr td {
+            font-size: 0.875em;
+            vertical-align: middle;
+            border-top: 1px solid #e7ebee;
+            padding: 12px 8px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+<br>
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler"
+                    type="button"
+                    data-mdb-toggle="collapse"
+                    data-mdb-target="#navbarTogglerDemo03"
+                    aria-controls="navbarTogglerDemo03"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" aria-current="page" data-toggle="modal"
+                           data-target="#addContact">Add contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" aria-current="page" data-toggle="modal"
+                           data-target="#categoryModal">Category</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/history/list}" class="nav-link active">History</a>
+                    </li>
+                    <li class="nav-item mt-4 pl-3">
+
+                        <select onchange="location =this.value" name="categoryName" id="categoryName"
+                                style="-webkit-appearance: none; border: none">
+                            <option th:value="@{/}">
+                                <a href="#" class="nav-link m-2 active" aria-current="page">Filter</a>
+                            </option>
+
+                            <div th:each="category : ${contactList.categories}">
+                                <option th:value="@{/category/filter/{id}(id = ${category.id})}">
+                                    <a href="#" th:value="${category.name}"
+                                       th:text="${category.name}"></a>
+                                </option>
+                            </div>
+                        </select>
+                    </li>
+                </ul>
+                <form th:action="@{/search}" class="d-flex input-group w-auto">
+                    <br>
+
+                    <input type="search"
+                           style="width: 400px;"
+                           class="form-control m-2"
+                           placeholder="Search contact"
+                           aria-label="Search"
+                           name="search"/>
+
+                    <button class="btn btn-outline-primary"
+                            type="submit"
+                            data-mdb-ripple-color="dark">
+                        Search
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div>
+        <hr>
+        <div class="container bootstrap snippets bootdey">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="main-box no-header clearfix">
+                        <div class="main-box-body clearfix">
+                            <div class="table-responsive">
+                                <table class="table user-list">
+                                    <thead>
+                                    <tr>
+                                        <th><span>Person</span></th>
+                                        <th><span>Contact</span></th>
+                                        <th><span>Category</span></th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="contact : ${contactList.contacts}">
+                                        <td th:text="${contact.name}"/>
+                                        <td th:text="${contact.phoneNumber}"/>
+                                        <div th:each="category : ${contactList.categories}">
+                                            <div th:if="${contact.categoryId == category.id}">
+                                                <td th:text="${category.name}"/>
+                                            </div>
+                                        </div>
+                                        <td style="width: 20%;">
+                                            <a th:href="@{/history/contact/{id}(id = ${contact.id})}"
+                                               class="table-link text-warning">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </a>
+                                            <a href="#" th:attr="data-target=${'#editContact'+contact.id}"
+                                               aria-current="page"
+                                               data-toggle="modal"
+                                               class="table-link text-info">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </a>
+                                            <a th:href="@{/contact/delete/{contactId}(contactId = ${contact.id})}"
+                                               class="table-link danger">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form th:action="@{/contact/add}" method="post">
+        <div class="modal fade" id="addContact" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add contact</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>
+                            <input type="text" name="name" placeholder="Enter name" maxlength="15" required>
+                        </label><br><br>
+                        <label>
+                            <input id="phone" type="text" name="phoneNumber" placeholder="Enter phone number"
+                                   minlength="13" maxlength="13" required>
+                        </label>
+                        <label for="categoryName">
+                            <select name="categoryName" id="categoryName">
+                                <div th:each="category : ${contactList.categories}">
+                                    <option th:value="${category.name}"
+                                            th:text="${category.name}"></option>
+                                </div>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form th:action="@{/category/add}" method="post">
+        <div class="modal fade" id="addCategory" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add category</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>
+                            <input type="text" name="categoryName" placeholder="Enter name" required>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div th:each="contact : ${contactList.contacts}" class="modal fade" th:attr="id=${'editContact' + contact.id}"
+         role="dialog">
+        <form th:action="@{/contact/update/{id}(id = ${contact.id})}" method="get">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit contact</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>
+                            <input th:value="${contact.name}" type="text" name="name" required>
+                        </label><br><br>
+                        <label>
+                            <input th:value="${contact.phoneNumber}" type="text"
+                                   name="phoneNumber" minlength="13" maxlength="13" required>
+                        </label>
+                        <label for="categoryName">
+                            <select name="categoryName" id="categoryName">
+                                <div th:each="category : ${contactList.categories}">
+                                    <div th:if="${contact.categoryId == category.id}">
+                                        <option selected th:value="${category.name}"
+                                                th:text="${category.name}"></option>
+                                    </div>
+                                    <div th:unless="${contact.categoryId == category.id}">
+                                        <option th:value="${category.name}"
+                                                th:text="${category.name}"></option>
+                                    </div>
+                                </div>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal" id="categoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Category</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${contactList.categories}">
+                            <div th:unless="${category.name == ' '}">
+                                <td th:text="${category.name}"/>
+                                <td style="width: 20%">
+                                    <a href="#" th:attr="data-target=${'#editCategory'+category.id}"
+                                       aria-current="page"
+                                       data-toggle="modal"
+                                       data-dismiss="modal"
+                                       class="table-link text-info">
+                                <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                    </a>
+                                </td>
+                                <td style="width: 20%">
+                                    <a th:href="@{/category/delete/{id}(id = ${category.id})}"
+                                       class="table-link text-warning">
+                                <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                    </a>
+                                </td>
+                            </div>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary btn-block btn-lg"
+                            data-toggle="modal" data-target="#addCategory">
+                        Add category
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div th:each="category : ${contactList.categories}" class="modal fade" th:attr="id=${'editCategory' + category.id}"
+         role="dialog">
+        <form th:action="@{/category/update/{id}(id = ${category.id})}" method="get">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit category</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>
+                            <input th:value="${category.name}" type="text" name="categoryName" required>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+</div>
+
+
+</div>
+</body>
+<!--<script>-->
+<!--    Toastify({-->
+<!--        text: "This is a toast",-->
+<!--        class: "table-link danger",-->
+<!--        duration: 3000,-->
+<!--        newWindow: false,-->
+<!--        close: true,-->
+<!--        gravity: "top",-->
+<!--        position: "right",-->
+<!--        stopOnFocus: true,-->
+<!--        style: {-->
+<!--            background: "linear-gradient(to right, #00b09b, #96c93d)",-->
+<!--        }-->
+<!--    }).showToast();-->
+<!--</script>-->
+</html>

@@ -11,10 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.contact_adder.general.Usage.currentUser;
+import static com.example.contact_adder.general.Usage.isAdded;
 
 @Controller
 public class ContactController {
-    private static boolean isAdded = true;
+
 
     private final ContactService contactService;
     private final CategoryService categoryService;
